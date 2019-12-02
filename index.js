@@ -26,7 +26,7 @@ server.get('/api/users', (req, res) => {
     })
     .catch(err=>{
         console.log("error on GET /db", err)
-        res.status(500).json({errorMessage: "error getting list from database"}) 
+        res.status(500).json({ error: "The users information could not be retrieved."}) 
     })
 })
 
@@ -38,25 +38,44 @@ server.get('/api/users/:id', (req, res) => {
 
     db.findById(id)
     .then(entry => {
-        res.status(200).json(entry)
+
+        if(!entry){
+            res.status(404).json({message: "The user with the specified ID does not exist."})
+        } else{
+            res.status(201).json(entry)
+        }
+        
     })
     .catch(err=>{
         console.log("error on GET /db/:id", err)
-        res.status(500).json({errorMessage: "error getting individual from database"}) 
+        res.status(500).json({error: "The user information could not be retrieved." }) 
     })
 })
 
 //POST individual
 server.post('/api/users', (req, res) => {
     const nameBio = req.body
-
+    const nameIf = req.body.name
+    const bioIf = req.body.bio
+console.log(nameBio)
     db.insert(nameBio)
     .then(dbentry => {
-        res.status(201).json(dbentry)
+        if(dbentry.bio == null || dbentry.name == null){
+             //if there is no name it wont even reach here, it will go straight to the catch   
+            res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
+               
+            
+                
+            
+        }else{
+            res.status(201).json(dbentry)
+        
+        }
+        
     })
     .catch(err=>{
         console.log("error on POST /db", err)
-        res.status(500).json({errorMessage: "error inserting individual to database"}) 
+        res.status(500).json({error:  "There was an error while saving the user to the database" }) 
     })
 })
 
