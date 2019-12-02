@@ -10,3 +10,6 @@
 
 everything has been done on the root of the app
 
+
+res.end() sends back a response to the client that just basically says "yeah the server got it but i'm not sending you any data"
+res.send() sends back data after the req
