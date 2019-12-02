@@ -54,32 +54,33 @@ server.get('/api/users/:id', (req, res) => {
 
 //POST individual
 server.post('/api/users', (req, res) => {
-    let nameBio = {}
-    if(req.body.name && req.body.bio){
+    let nameBio = req.body
+    if((nameBio.hasOwnProperty('name') && nameBio.hasOwnProperty('bio')) && (nameBio.bio !== null)){ //the third condition is because the function itself will accept bio as null
       nameBio = req.body
-    } else{
-       nameBio = null
-    }
+ 
 
-    db.insert(req.body)//without a req name the insert function will just fail and go to catch
+    db.insert(nameBio)//without a req name the insert function will just fail and go to catch
     .then(dbentry => {
-        if(nameBio === null){
-             //if there is no name it wont even reach here, it will go straight to the catch   
-            res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
+        // if(nameBio !== null){
+           
                
-            
+            res.status(201).json(dbentry)
                 
             
-        }else{
-            res.status(201).json(dbentry)
-        
-        }
+        // }else{
+            
+          //if there is no name it wont even reach here, it will go straight to the catch   //in the migration we can see that the name is not nullable but the bio is!
+        //   res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
+        // }
         
     })
     .catch(err=>{
         console.log("error on POST /db", err)
         res.status(500).json({error:  "There was an error while saving the user to the database" }) 
     })
+} else{
+    res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
+ }
 })
 
 //remove a user by id
