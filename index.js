@@ -11,6 +11,8 @@ const server = express() //creates our server
 
 server.use(express.json())
 
+server.use(cors())
+
 server.get('/', (req, res)=> {
     //access to 2 things, request object, response object
 res.send({api: "up and running..."})
